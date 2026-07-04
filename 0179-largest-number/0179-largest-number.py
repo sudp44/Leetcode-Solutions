@@ -1,20 +1,22 @@
-from functools import cmp_to_key
+#from functools import cmp_to_key
 class Solution:
     def largestNumber(self, nums: List[int]) -> str:
         as_strs = [str(num) for num in nums]
 
-        def compare(a: str, b:str) -> int:
-            order1 = a + b
-            order2 = b + a
+        #def compare(a: str, b:str) -> int:
+        #    order1 = a + b
+        #    order2 = b + a
 
-            if order1 > order2:
-                return -1
-            elif order2 > order1:
-                return 1
-            else:
-                return 0
+        #    if order1 > order2:
+        #        return -1
+        #    elif order2 > order1:
+        #        return 1
+        #    else:
+        #        return 0
             
-        as_strs.sort(key = cmp_to_key(compare))
+        #as_strs.sort(key = cmp_to_key(compare))
+        
+        as_strs.sort(key= lambda x: x*10, reverse=True)
 
         if as_strs[0] == "0":
             return "0"
