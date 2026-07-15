@@ -26,15 +26,7 @@
 **Visual snippet** (even length, 4 nodes):
 
 ---
-
-### Correct initial state (both at node 1)
-
-```
-1 → 2 → 3 → 4 → null
-↑   ↑
-s   f
-```
-No, even better:  
+ 
 ```
 1 → 2 → 3 → 4 → null
 s,f           // slow and fast both start at the first node (1)
@@ -44,7 +36,7 @@ So the first iteration begins with both pointers referencing the same node (the 
 
 ---
 
-### Full walkthrough with clearer markers
+### Full walkthrough with markers
 
 ```
 Initially:
