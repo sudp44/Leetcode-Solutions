@@ -24,7 +24,29 @@
 - **Space**: O(1) — two pointers
 
 **Visual snippet** (even length, 4 nodes):
+
 ---
+
+### Correct initial state (both at node 1)
+
+```
+1 → 2 → 3 → 4 → null
+↑   ↑
+s   f
+```
+No, even better:  
+```
+1 → 2 → 3 → 4 → null
+s,f           // slow and fast both start at the first node (1)
+```
+
+So the first iteration begins with both pointers referencing the same node (the head). The comment `// initial: slow = 1, fast = 1` is the accurate description. The visual’s offset under the arrow was an accident of formatting.
+
+---
+
+### Full walkthrough with clearer markers
+
+```
 Initially:
 s,f
 1 → 2 → 3 → 4 → null
@@ -36,4 +58,6 @@ After 1st iteration (slow moves once, fast moves twice):
 After 2nd iteration:
         s           f(null)
 1 → 2 → 3 → 4 → null
----
+```
+
+at the start, both `s` and `f` are on node 1; after the first step, `s` is on 2, `f` on 3; after the second step, `s` is on 3, `fast` is null, loop exits, and the middle (node 3) is returned.
