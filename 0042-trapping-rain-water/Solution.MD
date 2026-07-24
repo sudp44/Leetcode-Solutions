@@ -107,3 +107,48 @@ No overcount.
 > **“The side with the smaller height moves. To move left past a tall bar, we must have already seen an even taller right bar — and that right bar stays in `right_max` forever. So when we process left, `left_max` is always ≤ `right_max`. Therefore, `left_max` alone decides the water.”**
 
 In one line: **“The moving pointer’s max is always the limiting one, because the stationary side holds a taller bar that has been, or will be, captured in the other max.”**
+
+Yes, that's exactly it! You've nailed the invariant. Let me confirm and refine your wording just a tiny bit, then give a final memory anchor.
+
+---
+
+### Understanding
+
+1. **To move `left` past a bar, we must have seen a taller bar on the right.**  
+   Because the algorithm only moves `left` when `height[left] < height[right]`. So when `left` advances, we know that at that moment, the right side has a bar higher than the one we're leaving behind.
+
+2. **That tall right bar stays in the right side's "domain".**  
+   The right pointer only moves when `height[right] <= height[left]`. So if the right bar was taller than the left, the right pointer **stays put** – it doesn't move until the left side catches up.  
+   Therefore, that tall right bar remains in the suffix that `right_max` covers. So `right_max` (the maximum of the right side we've seen) is at least as large as that tall right bar.
+
+3. **Thus, `left_max` (which can be at most the height of the tallest bar we've passed on the left) cannot exceed `right_max` (which includes that tall right bar).**  
+   Since the tall right bar enabled us to pass the left bar, `right_max` ≥ that tall right bar > the left bar we left behind. So `left_max` is always ≤ `right_max`.
+
+4. **When we are now at the current `left` (after advancing), we may be on a smaller or larger bar.**  
+   If larger, `left_max` updates to this new bar, but still ≤ `right_max` because the right side still has that tall bar (or an even taller one).  
+   If smaller, `left_max` stays the same, still ≤ `right_max`.
+
+5. **Therefore, for the current `left`, the bottleneck is `left_max`**, and water added is `left_max - height[left]`.
+
+The only tiny nuance: `right_max` as maintained in the algorithm is the max of the bars **from the current `right` pointer to the end**, and that includes the tall right bar that enabled left to move. So indeed `left_max <= right_max` always holds when processing a left bar.
+
+---
+
+### Final memory hook
+
+> **"To move left, a taller right must exist. That right bar stays until left catches up, so right_max dominates left_max. Hence left_max is the bottleneck."**
+
+Or even shorter:
+
+> **"Tall right guards left; left_max never outgrows right_max."**
+
+---
+
+- **Whenever the algorithm moves the left pointer, there is at least one bar on the right (the one that caused `height[left] < height[right]`) that is taller than the tallest bar on the left up to that point.**  
+- **The right pointer never moves past that tall bar until the left side grows taller than it (or equal), which can only happen if an even taller left bar is encountered, but then that left movement would again require an even taller right bar to exist.**  
+- **Thus, at every step where we process a left bar, the right side contains at least one bar that is strictly taller than the maximum height seen on the left (`left_max`).**  
+- **Therefore, `left_max` is always strictly less than the true maximum on the right (or at most equal in edge cases), making `left_max` the bottleneck for the current left position.**  
+
+**The "tall right bar" that allowed the left to move remains in place (the right pointer hasn't moved past it yet), so `right_max` (which includes that bar) is at least that tall right bar's height, which is greater than any `left_max` that existed at that moment. Even if `left_max` later grows as we encounter taller left bars, those new left bars were only passed because we compared them to an **even taller right bar** that is still in the right side's domain. So `left_max` never outgrows `right_max`.**
+
+**Bottom line:** The side with the moving pointer always has its own max as the limiting factor because the other side holds a “guard” bar that is taller than anything seen on the moving side.
