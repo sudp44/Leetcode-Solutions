@@ -1,7 +1,3 @@
-Here’s the **Markdown summary** and a **complete runnable Python script** so you can test the solution in any online compiler (like Replit, PyCharm, or a plain Python terminal).
-
----
-
 ## 📘 Problem Summary – 1086. High Five
 
 **Given**  
