@@ -7,11 +7,6 @@
 
 > `left_max <= right_max`
 
-The current left bar (`height[left]`) is not the same as `left_max`.  
-`left_max` is the maximum among all bars from the original left end up to the current left pointer.  
-The current `height[left]` is just the bar we are about to process.  
-But your conclusion is exactly right:
-
 > **Whenever we process the left pointer, `left_max` is guaranteed to be ≤ `right_max`. Therefore, the water level at `left` is determined solely by `left_max`.**
 
 ### 🧠 Why this invariant is true (the deeper reason)
