@@ -77,7 +77,9 @@ Now, what is at index `lo`?
 So `lo` never holds an unknown value when `current` reaches it; it only holds a `1` (or the same `0` when the pointers coincide).
 
 In contrast, when we swap with `hi`, the element at `hi` is inside the **unknown** region, so it can be `0`, `1`, or `2`. That’s why we cannot advance `current` after a `2` swap—we must examine the new value next iteration.
+
 ---
+
 An **invariant** is just a property that stays true before and after every step of the loop. It’s not magic — it’s a guarantee we **actively maintain** by how we update the pointers.
 
 In this algorithm, the invariant is the four‑zone partition:
