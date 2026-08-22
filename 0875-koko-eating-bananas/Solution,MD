@@ -1,0 +1,69 @@
+**Koko Eating Bananas**, including the binary search boundary pattern and the monotonic condition concept
+
+---
+
+**Problem**  
+Given piles of bananas and a time limit `h`, find the minimum integer eating speed `k` (bananas per hour) such that Koko can eat all bananas within `h` hours.
+
+**Core Technique**  
+Binary search on the answer (speed). The search space is `[1, max(piles)]`. The condition `canEat(speed)` is monotonic: once a speed works, any larger speed also works. Find the boundary (minimum feasible speed).
+
+**Why Binary Search?**  
+The feasible speeds form a suffix: all speeds ≥ answer are feasible, all speeds < answer are not. Therefore, we can use binary search to find the smallest feasible speed.
+
+---
+
+**Algorithm Steps**
+
+1. `left = 1` (minimum possible speed), `right = max(piles)` (maximum needed speed).
+2. While `left < right`:
+   - `mid = (left + right) // 2`
+   - If `canEat(piles, mid, h)` is **True** (feasible):  
+     `right = mid` (keep `mid` as candidate, search left for smaller)
+   - Else (not feasible):  
+     `left = mid + 1` (need larger speed, discard `mid`)
+3. Return `left` (or `right`, they are equal).
+
+**Helper `canEat(piles, speed, h)`**
+- Compute total hours = sum over each pile of `ceil(pile / speed)`.
+- Use ceiling division: `hours += -(-pile // speed)` or `(pile + speed - 1) // speed`.
+- Return `hours <= h`.
+
+**Why `while left < right` (No Separate `ans` Variable)**
+- The invariant: **the answer is always inside `[left, right]`**.
+- When `mid` is feasible, we set `right = mid` (not `right = mid - 1`) to keep `mid` as a possible answer.
+- When `mid` is not feasible, we set `left = mid + 1` (discarding `mid` and all smaller).
+- The interval shrinks until `left == right`, and that single remaining index is the answer. No need for `ans`.
+
+**Monotonic Condition Explained**
+- The function `canEat(speed)` is monotonic: as speed increases, total hours decreases (or stays same).
+- If speed `s` is feasible, then any speed > `s` is also feasible (faster never hurts).
+- Thus, the condition flips from False to True only once. This allows binary search.
+
+---
+
+**Complexity**
+- **Time:** O(n log M), where `n = len(piles)`, `M = max(piles)`.  
+  Binary search takes O(log M) iterations; each `canEat` call scans all n piles.
+- **Space:** O(1) – only a few integer variables.
+
+---
+
+**Common Mistakes**
+- Wrong update order: feasible → `right = mid`; not feasible → `left = mid + 1`. Reversing these causes infinite loop or wrong answer.
+- Using `left <= right` with `mid ± 1` and storing `ans` is also correct, but must not mix up the moves.
+- Forgetting ceiling division: `(pile + speed - 1) // speed` or `-(-pile // speed)`; plain `pile // speed` will undercount hours.
+- Setting `right = max(piles)` is crucial; `right = len(piles)` fails when piles have large values.
+
+---
+
+**Edge Cases**
+- `len(piles) == h`: speed must be at least `max(piles)` because each pile requires at least one hour. Binary search still works.
+- `h > len(piles)`: there may be idle time; search finds a speed that finishes in ≤ h hours.
+- All piles empty? Not possible per constraints (piles[i] ≥ 1).
+
+---
+
+**Memory Hook**
+> *“Can eat? Go left. Cannot? Go right. Left stays feasible, right shrinks. Boundary = left.”*
+
