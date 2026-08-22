@@ -1,5 +1,3 @@
----
-
 **Binary Search Patterns**
 
 1. **Exact Search (Standard Binary Search)**
