@@ -1,4 +1,4 @@
-**quick recall notes** for **Maximum Depth of Binary Tree** (LeetCode 104).
+**Maximum Depth of Binary Tree**
 
 ---
 
