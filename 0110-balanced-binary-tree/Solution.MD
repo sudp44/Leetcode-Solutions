@@ -1,62 +1,79 @@
-**Balanced Binary Tree** (LeetCode 110)
+**Balanced Binary Tree (LeetCode 110)**, including both the simple top‑down and the optimal bottom‑up approaches.
 
 ---
 
 **Problem**  
-Given a binary tree, determine if it is height‑balanced. A balanced tree is one where the left and right subtrees of every node differ in height by at most 1.
+Given a binary tree, determine if it is height‑balanced: for every node, the height difference between its left and right subtrees is at most 1.
 
-**Core Technique**  
-Recursive height calculation + recursive balance check. This is a **top‑down** approach (not optimal, but simple).
+**Approach 1: Top‑Down (Simple but O(n²) time)**  
+- Compute height of left and right subtrees at each node, check difference, then recursively check left and right children.  
+- Recomputes heights many times.
 
-**Algorithm Steps**  
-1. If `root` is `None` → return `True` (empty tree is balanced).  
-2. Compute `left_height = getHeight(root.left)`.  
-3. Compute `right_height = getHeight(root.right)`.  
-4. If `abs(left_height - right_height) > 1` → return `False`.  
-5. Otherwise, recursively check that both left and right subtrees are balanced:  
-   `return self.isBalanced(root.left) and self.isBalanced(root.right)`.
+**Approach 2: Bottom‑Up (Optimal, O(n) time)**  
+- Use a post‑order DFS that returns the height of the subtree if balanced, or `-1` if unbalanced.  
+- Avoids recomputation by propagating height and balance status in a single pass.
 
-**Helper `getHeight(node)`**  
-- If `node` is `None` → return `0`.  
-- Recursively compute left and right heights, return `max(left, right) + 1`.
+---
 
-**Python Code (canonical)**  
+### Python Code (Optimal Bottom‑Up)
+
 ```python
 class Solution:
     def isBalanced(self, root: Optional[TreeNode]) -> bool:
-        if not root:
-            return True
-        left_h = self.getHeight(root.left)
-        right_h = self.getHeight(root.right)
-        if abs(left_h - right_h) > 1:
-            return False
-        return self.isBalanced(root.left) and self.isBalanced(root.right)
+        return self.check(root) != -1
 
-    def getHeight(self, node: Optional[TreeNode]) -> int:
+    def check(self, node: Optional[TreeNode]) -> int:
         if not node:
             return 0
-        return max(self.getHeight(node.left), self.getHeight(node.right)) + 1
+
+        left = self.check(node.left)
+        if left == -1:
+            return -1
+
+        right = self.check(node.right)
+        if right == -1:
+            return -1
+
+        if abs(left - right) > 1:
+            return -1
+
+        return max(left, right) + 1
 ```
 
-**Complexity**  
-- **Time:** O(n²) in worst case because for each node, `getHeight` traverses its entire subtree. This is inefficient; the optimal bottom‑up approach is O(n).  
-- **Space:** O(h) for recursion stack.
+---
 
-**Why this approach is not optimal**  
-- Repeatedly computes heights of the same subtrees.  
-- Better solution: use a **bottom‑up** DFS that returns height and checks balance in one pass, giving O(n) time.  
-  (If asked, mention you can optimise by returning `-1` or a tuple.)
+### Complexity
 
-**Common Mistakes**  
-- Forgetting to call `isBalanced` on both subtrees after checking the root’s height difference.  
-- Confusing height with depth; height is number of edges on longest path to leaf, here we use nodes count (`None` returns 0).  
-- Not handling the case where one subtree is `None` (height 0).  
-- Using `or` instead of `and` when combining recursive balance checks.
+| Approach | Time   | Space |
+|----------|--------|-------|
+| Top‑Down | O(n²) | O(h)  |
+| Bottom‑Up| O(n)   | O(h)  |
 
-**Key Insight – What “balanced” means**  
-For every node, `|height(left) - height(right)| <= 1`.  
-This is a global property: the root can be balanced but a deeper subtree might not.
+`h` = height of tree (worst case O(n) for skewed, O(log n) for balanced).
 
-**Memory Hook**  
-> *“Balanced = height diff ≤ 1 at every node. Check root, then check left and right recursively.”*  
-Or: *“Height helper plus recursive balance check.”*
+---
+
+### Key Intuition
+
+- A tree is balanced if **every** node's subtrees differ in height by ≤ 1.
+- In the bottom‑up method, a sentinel `-1` indicates "unbalanced".  
+- If any child returns `-1`, the current node immediately returns `-1` without further checks.
+- Height of a node = `1 + max(left_height, right_height)`.
+
+---
+
+### Common Mistakes
+
+- Forgetting to check both subtrees recursively in the top‑down approach.
+- Returning `0` for empty node and then adding 1 inconsistently.
+- In bottom‑up, forgetting to propagate `-1` early (leads to wrong result or extra work).
+- Using `or` instead of `and` in top‑down recursive calls.
+- Not handling the case where a subtree is empty (height 0).
+
+---
+
+### Memory Hooks
+
+- **Top‑Down:** *"Check root, then left and right. Height helper repeated."*
+- **Bottom‑Up:** *"Return -1 for unbalanced, height otherwise. Check left, check right, compare heights."*
+- **One‑liner:** *"Balanced = height diff ≤ 1 everywhere. Optimal = single pass from bottom."*
